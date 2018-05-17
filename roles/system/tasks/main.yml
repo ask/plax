@@ -5,22 +5,6 @@
     - scripts
     - tmp
 
-- name: zsh facts
-  shell: 'echo $SHELL'
-  register: default_shell
-  changed_when: False
-
-- name: make zsh default
-  shell: chsh -s /bin/zsh
-  become_method: sudo
-  when: default_shell.stdout.find('/bin/zsh') == -1
-
-- name: download dotfiles
-  git: repo=https://github.com/altoduo/dotfiles.git
-       dest={{ home }}/scripts/dotfiles
-       update=no
-       track_submodules=True  # Supported by ansible >1.8
-
 - name: homebrew install
   homebrew:
     name={{ item }}
@@ -28,38 +12,177 @@
     update_homebrew=yes
     upgrade_all=yes
   with_items:
-    # Text Editors
+    - ack
+    - adns
+    - asciinema
+    - asciinema2gif
+    - aspcud
+    - aspell
+    - autoconf
+    - automake
+    - bash
+    - bash-completion@2
+    - bmon
+    - camlp4
+    - capnp
+    - cask
+    - clasp
+    - clingo
+    - cmake
+    - colordiff
+    - confuse
+    - coreutils
+    - cscope
+    - ctags
+    - dark-mode
+    - dash
+    - ddate
+    - diff-so-fancy
+    - docker
+    - docker-compose
+    - docker-machine
+    - emacs
+    - enchant
+    - erlang
+    - exa
+    - exiftool
+    - exiv2
+    - faac
+    - ffmpeg
+    - findutils
+    - flac
+    - fontconfig
+    - freetype
+    - gcore
+    - gd
+    - gdb
+    - gdbm
+    - gettext
+    - gflags
+    - gifsicle
+    - git
+    - git-lfs
+    - glib
+    - gmp
+    - gnupg
+    - gnuplot
+    - gnutls
+    - go
+    - godep
+    - graphviz
+    - gringo
+    - htop
+    - htop-osx
+    - hub
+    - icu4c
+    - ifstat
+    - iftop
+    - imagemagick
+    - jemalloc
+    - jpeg
+    - jq
+    - kafka
+    - lame
+    - libassuan
+    - libevent
+    - libffi
+    - libgcrypt
+    - libgpg-error
+    - libidn2
+    - libksba
+    - libogg
+    - libpng
+    - librdkafka
+    - libtasn1
+    - libtiff
+    - libtool
+    - libunistring
+    - libusb
+    - libvorbis
+    - libxml2
+    - libyaml
+    - lua
+    - lz4
+    - lzlib
     - macvim
+    - mad
+    - md5sha1sum
+    - moreutils
+    - netcat
+    - nettle
+    - nginx
+    - ninja
+    - node
+    - npth
+    - nsq
+    - ocaml
+    - ocamlbuild
+    - onigurama
+    - opam
+    - openssl
+    - p11-kit
+    - pcre
+    - phantomjs
+    - pinentry
+    - pkg-config
+    - postgresql
+    - pyenv
+    - pypy
+    - pypy3
+    - python
+    - python3
+    - qcachegrind
+    - qt
+    - rabbitmq
+    - rakudo-star
+    - readline
+    - redis
+    - rocksdb
+    - ruby
+    - scons
+    - selenium-server-standalone
+    - serf
+    - sl
+    - sloccount
+    - smlnj
+    - snappy
+    - sox
+    - sqlite
+    - stow
+    - telnet
+    - the_silver_searcher
+    - tidy-html5
+    - tig
+    - tmux
+    - tokyo-cabinet
+    - tree
+    - tsung
+    - unixodbc
+    - unrar
+    - utf8proc
+    - uwsgi
+    - varnish
+    - watch
+    - webp
+    - wget
+    - wxmac
+    - x264
+    - xvid
+    - xz
+    - yajl
+    - yasm
+    - zeromq
+    - zookeeper
     - neovim/neovim/neovim
     - vim
     # Languages
-    - go
     - markdown
-    - pandoc
-    - python
-    - python3
-    # Networking
     - curl
     - iperf
     - nmap
-    - openssl
-    - wget
-    # Version Control
-    - duplicity
-    - git
-    - rdiff-backup
-    # Cli
-    - bash
     - tmux
     - zsh
-    # Searching
-    - ack
-    - the_silver_searcher
-    # Misc tools
     - awscli
-    - cask
-    - cmake
-    - ctags
     - gpg
 
 - name: homebrew cask install
@@ -67,51 +190,51 @@
     name={{ item }}
     state=present
   with_items:
+    - 0xed
+    - 1password
+    - 1password-cli
+    - ableton-live-suite
+    - auganizer
+    - aurora
+    - cardhop
+    - cyberduck
+    - daisydisk
     - dropbox
-    - flux
-    - google-chrome
+    - fantastical
+    - firefox
+    - github-desktop
     - google-cloud-sdk
-    - keepassx
-    - spectacle
+    - google-chrome
+    - google-drive
+    - grammarly
+    - hex-fiend
+    - insomnia
+    - iterm2
+    - java
+    - keybase
+    - mactex
+    - macvim
+    - minecraft
+    - native-access
+    - nestopia
+    - nordvpn
+    - otx
+    - pacifist
+    - silverlight
+    - skype
+    - slack
     - spotify
+    - steam
+    - textual
+    - the-unarchiver
+    - torbrowser
+    - transmission
     - vagrant
     - virtualbox
-
-- name: pip install
-  pip: name={{ item }} state=latest
-  become_user: sudo
-  with_items:
-    - cronos
-    - flake8
-    - grip
-    - ipdb
-    - ipython
-    - joblib
-    - line_profiler
-    - msgpack-python
-    - neovim
-    - numpy
-    - pep8
-    - pytest
-    - virtualenv
-
-- name: dotfile sourcing
-  lineinfile: dest={{ home }}/{{ item.location }} line={{ item.line }} create=true
-  with_items:
-    - { location: '.bashrc',    line: 'export DOTFILES_PATH={{ home }}/scripts/dotfiles' }
-    - { location: '.bashrc',    line: 'source $DOTFILES_PATH/bash/.bashrc' }
-    - { location: '.zshrc',     line: 'export DOTFILES_PATH={{ home }}/scripts/dotfiles' }
-    - { location: '.zshrc',     line: 'source $DOTFILES_PATH/zsh/.zshrc' }
-    - { location: '.zshrc',     line: 'alias plax="cd ~/scripts/plax; ansible-playbook -i inventory playbook.yml; cd -"' }
-    - { location: '.zshrc',     line: 'alias plaxe="mvim ~/scripts/plax/roles/system/tasks/main.yml"' }
-    - { location: '.gvimrc',    line: 'source $DOTFILES_PATH/vim/.gvimrc' }
-    - { location: '.tmux.conf', line: 'source $DOTFILES_PATH/tmux/.tmux.conf' }
-    - { location: '.vimrc',     line: 'source $DOTFILES_PATH/vim/.vimrc' }
-    - { location: '.gitconfig', line: '[include]' }
-    - { location: '.gitconfig', line: '  path = ~/scripts/dotfiles/git/.gitconfig' }
-
-- name: dotfile symlink
-  file: src={{ home }}/scripts/dotfiles/vim/.vim dest={{ home }}/.vim state=link
+    - vlc
+    - wireshark
+    - xquartz
+    - zoom
 
 - name: os x specific configurations
   osx_defaults: domain={{ item.domain }} key={{ item.key }} type={{ item.type }} value={{ item.value }}
